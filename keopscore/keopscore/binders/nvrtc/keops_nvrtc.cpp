@@ -390,11 +390,7 @@ public :
 
         if (use_chunk_mode == 0) {
             // warning : blockSize.x was previously set to CUDA_BLOCK_SIZE; currently CUDA_BLOCK_SIZE value is used as a bound.
-            blockSize_x = std::min(cuda_block_size,
-                                   std::min(maxThreadsPerBlock,
-                                            (int) (sharedMemPerBlock / std::max(1, (int) (dimY * sizeof(TYPE))))
-                                           )
-                                  ); // number of threads in each block
+            blockSize_x = 512; // sweetspot tested on A100 40GB and A100 80GB
         } else {
             // warning : the value here must match the one which is set in file GpuReduc1D_chunks.py, line 59
             // and file GpuReduc1D_finalchunks.py, line 67

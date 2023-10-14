@@ -109,7 +109,7 @@ keops_sqrt = math_function(cpu_code="sqrt", gpu_half2_code="h2sqrt")
 
 keops_relu = math_function(
     cpu_code=lambda x: f"(({x}<0.0f)? 0.0f : {x})",
-    gpu_half2_code=lambda x: f"{h2ge0(x)}*({x})",
+    gpu_half2_code=lambda x: f"__hmax2({x}, {h2zero})",  # faster than f"{h2ge0(x)}*({x})"
 )
 
 keops_equal = math_function(
