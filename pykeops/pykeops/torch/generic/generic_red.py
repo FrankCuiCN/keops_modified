@@ -154,7 +154,7 @@ class GenredAutograd_base:
         params = ctx.params
         dimout = ctx.dimout
         tagIJ = ctx.tagIJ
-        args = ctx.saved_tensors[:-1]  # Unwrap the saved variables
+        args = ctx.saved_tensors  # [:-1]  # Unwrap the saved variables  # note: easy to miss: if you don't include result, don't use [:-1]
         nargs = len(args)
         # result = ctx.saved_tensors[-1].detach()
 
