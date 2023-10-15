@@ -143,7 +143,7 @@ class GenredAutograd_base:
 
         # relying on the 'ctx.saved_variables' attribute is necessary  if you want to be able to differentiate the output
         #  of the backward once again. It helps pytorch to keep track of 'who is who'.
-        ctx.save_for_backward(*args, result)
+        ctx.save_for_backward(*args)  # result not needed for our usecase
 
         # for forward AD we cannot use save_for_backward, so we put also args and result in ctx...
         # ctx.args = args  # don't need forward AD, this causes memory leak unless manually gc.collect
@@ -156,7 +156,7 @@ class GenredAutograd_base:
         tagIJ = ctx.tagIJ
         args = ctx.saved_tensors[:-1]  # Unwrap the saved variables
         nargs = len(args)
-        result = ctx.saved_tensors[-1].detach()
+        # result = ctx.saved_tensors[-1].detach()
 
         check_AD_supported(params.formula)
 
@@ -187,9 +187,9 @@ class GenredAutograd_base:
                 # but are useful to keep track of the actual variables used in the formula
                 _, cat, dim, pos = get_type(sig, position_in_list=var_ind)
                 var = f"Var({pos},{dim},{cat})"  # V
-                formula_g = f"Grad_WithSavedForward({params.formula},{var},{eta},{resvar})"  # Grad<F,V,G,R>
-                aliases_g = params.aliases + [eta, resvar]
-                args_g = (*args, G, result)  # Don't forget the gradient to backprop !
+                formula_g = f"Grad_WithSavedForward({params.formula},{var},{eta},{resvar})"  # Grad<F,V,G,R>  # error message if remove {resvar} here
+                aliases_g = params.aliases + [eta]  # resvar
+                args_g = (*args, G)  # result  # Don't forget the gradient to backprop !
 
                 # N.B.: if I understand PyTorch's doc, we should redefine this function every time we use it?
                 genconv = GenredAutograd_fun
