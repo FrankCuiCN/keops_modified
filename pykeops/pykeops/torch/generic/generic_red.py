@@ -146,8 +146,8 @@ class GenredAutograd_base:
         ctx.save_for_backward(*args, result)
 
         # for forward AD we cannot use save_for_backward, so we put also args and result in ctx...
-        ctx.args = args
-        ctx.result = result
+        # ctx.args = args  # don't need forward AD, this causes memory leak unless manually gc.collect
+        # ctx.result = result
 
     @staticmethod
     def _backward(ctx, G, _):
